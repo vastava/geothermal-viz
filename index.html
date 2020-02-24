@@ -69,6 +69,7 @@
     <script src="https://turban.github.io/Leaflet.Photo/Leaflet.Photo.js"></script>
     <script src="data/egs_resource.js"></script>
    <script src="data/gtp.js"></script>
+   <script src="data/volcano_reprojected.js"></script>
   <script src="leaflet-svg-shape-markers.min.js"></script>
 
 
@@ -110,7 +111,7 @@
                 
 
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Discussion <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> World <span class="caret"></span></a>
                     <ul class="dropdown-menu">
 
                         <li style="font-size: 14px">
@@ -220,15 +221,73 @@ This website explores the potential for geothermal energy on a global scale, and
                 <h3 style="text-align: center">West Coast</h3>
                 <div class="embeded-photo img-responsive"></div>
                 <br>
-                <p>Most of the geothermal power plants in the United States are in western states and Hawaii, where geothermal energy resources are close to the earth's surface. California generates the most electricity from geothermal energy. The Geysers dry steam reservoir in Northern California is the largest known dry steam field in the world and has been producing electricity since 1960.</p>
+                <p>Most of the geothermal power plants in the United States are in western states and Hawaii, where geothermal energy resources are close to the Earth's surface. California generates the most electricity from geothermal energy, being responsible for about 71.9% of all of the geothermal energy produced in the U.S. The Geysers dry steam reservoir in Northern California is the largest known dry steam field in the world and has been producing electricity since 1960.</p>
 				<br><br>
-                <p style="font-weight:bold">Table</p>
+                <div class="table-wrapper">
+                            <table class="basic-table">
+                                <caption>States with geothermal power plants in 2018</caption>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th class="width-40">State share of geothermal electricity generation</th>
+                                        <th class="width-30">Geothermal share of state electricity generation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                      <td width="35%">California</td>
+                                      <td>71.9%</td>
+                                      <td>6.1%</td>
+                                    </tr>
+                                    
+                                    <tr>
+                                      <td>Nevada</td>
+                                      <td>21.7%</td>
+                                      <td>9.1%</td>
+                                    </tr>
 
-                <img src="img/hotspring_newZealand.jpg" height=100% width=100% style="display: block;">
-                <p style="font-size: 14px">Placeholder img</p>
+                                    <tr>
+                                      <td>Utah</td>
+                                      <td>2.8%</td>
+                                      <td>1.2%</td>
+                                          </tr>
+                                            <tr>
+                                      <td>Hawaii</td>
+                                      <td>1.9%</td>
+                                      <td>3.2%</td>
+                                    </tr>
 
-                <br><br>
-                <p>Yellowstone; dry steam, flash steam + binary cycle </p>
+                                    <tr>
+                                      <td>Oregon</td>
+                                      <td>1.1%</td>
+                                      <td>0.3%</td>
+                                      </tr>
+
+                                    <tr>
+                                      <td>Idaho</td>
+                                      <td>0.5%</td>
+                                      <td>0.5%</td>
+                                      </tr>
+                                    
+                                    <tr>
+                                      <td>New Mexico</td>
+                                      <td>0.1%</td>
+                                      <td>&lt; 0.1%</td>
+                                      </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+<!--                 <img src="img/hotspring_newZealand.jpg" height=100% width=100% style="display: block;">
+                <p style="font-size: 14px">Placeholder img</p> -->
+
+                <p>Dry steam power plants draw directly from underground wells of steam. There are only two known underground resources of steam in the United States:<br><br>
+<ul style="list-style-type:disc;">
+<li>The Geysers in northern California</li>
+<li>Yellowstone National Park in Wyoming (Old Faithful geyser)</li></ul>
+<br>
+Because Yellowstone is protected from development, the only dry steam plants in the country are at The Geysers dry steam reservoir, which is the largest known dry steam field in the world and has been producing electricity since 1960.
+</p>
                 <br><br>
 
 
@@ -535,6 +594,31 @@ function style_gtp() {
     }
 }
 
+function pop_volc(feature, layer) {
+
+    var popupContent = feature.properties['name'] 
+    layer.bindPopup(popupContent, {maxHeight: 400});
+}
+
+function style_volc() {
+    return {
+        // pane: 'pane_gtp',
+        shape: 'triangle',
+        radius: 4.399999999999999,
+        opacity: 0.5,
+        // fillColor: 'RGBA(128, 23, 14 1)',
+        fillColor: '#A65C56',
+        dashArray: '',
+        lineCap: 'butt',
+        lineJoin: 'miter',
+        weight: 2.0,
+        fill: true,
+        fillOpacity: 0.8,
+        color: '#80170E',
+        interactive: true,
+    }
+}
+
 var photoLayer1 = L.photo.cluster().on('mouseover', showPhoto);
 photoLayer1.add(photos1);
 
@@ -573,6 +657,21 @@ photoLayer3.add(photos3);
                         return L.shapeMarker(latlng, style_gtp(feature));
                     },
                 })],
+         'ring': [L.geoJSON(json_volcano, {
+                    attribution: '',
+                    interactive: true,
+                    dataVar: 'json_volcano',
+                    layerName: 'layer_volcano',
+                    // pane: 'pane_gtp',
+                    onEachFeature: pop_volc,
+                    pointToLayer: function (feature, latlng) {
+                        var context = {
+                            feature: feature,
+                            variables: {}
+                        };
+                        return L.shapeMarker(latlng, style_volc(feature));
+                    },
+                })],
 
 
          'PhotoLayers1': [photoLayer1],
@@ -590,7 +689,7 @@ photoLayer3.add(photos3);
             // Model:{lat: 25.300, lng:95.5, zoom: 7, name: 'Home',position: 'fullpage'},
             United: {lat: 40.8797, lng: -115.3626, zoom: 4, name: 'United States', layers:['geotherm']},
             West: {lat: 40.8797, lng: -120.3626, zoom: 5, name: 'West Coast', layers:['geotherm', 'gpt']},
-            Ring:{lat:23.700, lng:98.5, zoom: 0, name:'Data', layers:[]},
+            Ring:{lat: 18.6995035, lng: 147.9942866, zoom: 2.1, name:'Data', layers:['ring']},
             Asia:{lat:23.700, lng:98.5, zoom: 1, name:'Data', layers:[]},
             Europe:{lat:23.700, lng:98.5, zoom: 2, name:'Data', layers:[]},
             Africa:{lat:23.700, lng:98.5, zoom: 3, name:'Data', layers:[]},
